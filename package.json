@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "MERN Full Stack E-commerce Server",
   "main": "index.js",
-  "type": "module",
+  
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
