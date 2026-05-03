@@ -1,47 +1,48 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import connectDB from "./config/db.js";
+require("dotenv").config();
 
-import authRoutes from "./routes/authRoutes.js";
-import productRoutes from "./routes/productRoutes.js";
-import orderRoutes from "./routes/orderRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+const express = require("express");
 
-dotenv.config();
+const cors = require("cors");
 
-connectDB().catch(err => {
-  console.error("DB Error:", err.message);
-  process.exit(1);
-});
+const connectDB = require("./config/db");
+
+const authRoutes = require("./routes/authRoutes");
+
+const productRoutes = require("./routes/productRoutes");
+
+const orderRoutes = require("./routes/orderRoutes");
+
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
-// Middleware
-app.use(cors({ origin: true, credentials: true }));
+connectDB();
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
-app.use(cookieParser());
 
-// Test route
 app.get("/", (req, res) => {
-  res.send("API is running...");
+  res.send("Server Running");
 });
 
-// Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/users", userRoutes);
 
-// Error Handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: err.message });
-});
+app.use("/api/products", productRoutes);
+
+app.use("/api/orders", orderRoutes);
+
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on ${PORT}`);
 });

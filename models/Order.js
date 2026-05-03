@@ -2,28 +2,50 @@ const mongoose = require("mongoose");
 
 const trackingSchema = new mongoose.Schema({
   status: String,
+
   location: String,
+
   note: String,
-  time: { type: Date, default: Date.now },
+
+  date: Date,
 });
 
 const orderSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    userEmail: String,
+
+    productId: String,
+
+    productName: String,
+
+    firstName: String,
+
+    lastName: String,
+
     quantity: Number,
+
     totalPrice: Number,
-    status: {
-      type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: "pending",
-    },
-    payment: String,
-    address: String,
+
     phone: String,
+
+    address: String,
+
+    notes: String,
+
+    status: String,
+
+    paymentMethod: String,
+
+    paymentStatus: String,
+
     tracking: [trackingSchema],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Order", orderSchema);
+module.exports = mongoose.model(
+  "Order",
+  orderSchema
+);

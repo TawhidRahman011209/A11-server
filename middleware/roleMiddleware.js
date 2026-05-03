@@ -1,10 +1,22 @@
-const authorizeRoles = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: "Access denied" });
+const User = require("../models/User");
+
+const roleMiddleware = (role) => {
+  return async (req, res, next) => {
+    const user = await User.findOne({
+      email: req.user.email,
+    });
+
+    if (
+      user.role !== role ||
+      user.status === "suspended"
+    ) {
+      return res.status(403).json({
+        message: "Forbidden",
+      });
     }
+
     next();
   };
 };
 
-module.exports = authorizeRoles;
+module.exports = roleMiddleware;

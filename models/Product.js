@@ -3,24 +3,36 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema(
   {
     name: String,
-    description: String,
+
     category: String,
+
     price: Number,
+
     quantity: Number,
-    minOrder: Number,
+
+    moq: Number,
+
     images: [String],
-    video: String,
-    paymentOption: {
-      type: String,
-      enum: ["cod", "payfirst"],
+
+    description: String,
+
+    paymentOption: String,
+
+    demoVideo: String,
+
+    showOnHome: {
+      type: Boolean,
+      default: false,
     },
-    showOnHome: { type: Boolean, default: false },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
+
+    createdBy: String,
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model(
+  "Product",
+  productSchema
+);

@@ -1,34 +1,192 @@
 const Order = require("../models/Order");
-const Product = require("../models/Product");
 
 exports.createOrder = async (req, res) => {
-  const { productId, quantity, address, phone } = req.body;
+  try {
+    const order = await Order.create({
+      ...req.body,
 
-  const product = await Product.findById(productId);
+      status: "Pending",
 
-  if (!product)
-    return res.status(404).json({ message: "Product not found" });
+      paymentStatus: "Unpaid",
 
-  if (quantity < product.minOrder || quantity > product.quantity) {
-    return res.status(400).json({ message: "Invalid quantity" });
+      tracking: [],
+    });
+
+    res.status(201).json(order);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
   }
-
-  const totalPrice = quantity * product.price;
-
-  const order = await Order.create({
-    user: req.user.id,
-    product: productId,
-    quantity,
-    totalPrice,
-    address,
-    phone,
-    payment: product.paymentOption,
-  });
-
-  res.status(201).json(order);
 };
 
 exports.getMyOrders = async (req, res) => {
-  const orders = await Order.find({ user: req.user.id }).populate("product");
-  res.json(orders);
+  try {
+    const orders = await Order.find({
+      userEmail: req.user.email,
+    });
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getSingleOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(
+      req.params.id
+    );
+
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.deleteOrder = async (req, res) => {
+  try {
+    await Order.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Deleted",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getPendingOrders = async (
+  req,
+  res
+) => {
+  try {
+    const orders = await Order.find({
+      status: "Pending",
+    });
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.approveOrder = async (req, res) => {
+  try {
+    const order =
+      await Order.findByIdAndUpdate(
+        req.params.id,
+        {
+          status: "Approved",
+        },
+        {
+          new: true,
+        }
+      );
+
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.rejectOrder = async (req, res) => {
+  try {
+    const order =
+      await Order.findByIdAndUpdate(
+        req.params.id,
+        {
+          status: "Rejected",
+        },
+        {
+          new: true,
+        }
+      );
+
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getApprovedOrders = async (
+  req,
+  res
+) => {
+  try {
+    const orders = await Order.find({
+      status: "Approved",
+    });
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.addTracking = async (req, res) => {
+  try {
+    const trackingData = {
+      ...req.body,
+      date: new Date(),
+    };
+
+    const order = await Order.findById(
+      req.params.id
+    );
+
+    order.tracking.push(trackingData);
+
+    await order.save();
+
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getAllOrders = async (req, res) => {
+  try {
+    const search = req.query.search || "";
+
+    const orders = await Order.find({
+      $or: [
+        {
+          productName: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+
+        {
+          userEmail: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+      ],
+    });
+
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
