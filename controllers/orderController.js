@@ -1,14 +1,13 @@
 const mongoose = require("mongoose");
 const Order = require("../models/Order");
 
-// ✅ CREATE ORDER
 exports.createOrder = async (req, res) => {
   try {
     const order = await Order.create({
       ...req.body,
       status: "Pending",
       paymentStatus: "Unpaid",
-      tracking: [], // always initialize
+      tracking: [], 
     });
 
     res.status(201).json(order);
@@ -20,7 +19,6 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// ✅ GET MY ORDERS
 exports.getMyOrders = async (req, res) => {
   try {
     if (!req.user || !req.user.email) {
@@ -42,12 +40,10 @@ exports.getMyOrders = async (req, res) => {
   }
 };
 
-// ✅ GET SINGLE ORDER (SAFE + FIXED)
 exports.getSingleOrder = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 🔥 FIX: prevent crash on invalid Mongo ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         message: "Invalid order ID",
@@ -62,7 +58,6 @@ exports.getSingleOrder = async (req, res) => {
       });
     }
 
-    // 🔥 FIX: ensure tracking always exists
     if (!order.tracking) {
       order.tracking = [];
     }
@@ -77,7 +72,6 @@ exports.getSingleOrder = async (req, res) => {
   }
 };
 
-// ✅ DELETE ORDER
 exports.deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -108,7 +102,6 @@ exports.deleteOrder = async (req, res) => {
   }
 };
 
-// ✅ GET PENDING ORDERS
 exports.getPendingOrders = async (req, res) => {
   try {
     const orders = await Order.find({
@@ -124,7 +117,6 @@ exports.getPendingOrders = async (req, res) => {
   }
 };
 
-// ✅ APPROVE ORDER
 exports.approveOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -154,7 +146,6 @@ exports.approveOrder = async (req, res) => {
   }
 };
 
-// ✅ REJECT ORDER
 exports.rejectOrder = async (req, res) => {
   try {
     const { id } = req.params;
@@ -181,7 +172,6 @@ exports.rejectOrder = async (req, res) => {
   }
 };
 
-// ✅ GET APPROVED ORDERS
 exports.getApprovedOrders = async (req, res) => {
   try {
     const orders = await Order.find({
@@ -197,7 +187,6 @@ exports.getApprovedOrders = async (req, res) => {
   }
 };
 
-// ✅ ADD TRACKING (IMPORTANT FIX)
 exports.addTracking = async (req, res) => {
   try {
     const { id } = req.params;
@@ -236,7 +225,6 @@ exports.addTracking = async (req, res) => {
   }
 };
 
-// ✅ GET ALL ORDERS (ADMIN SEARCH)
 exports.getAllOrders = async (req, res) => {
   try {
     const search = req.query.search || "";
