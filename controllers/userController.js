@@ -63,7 +63,6 @@ exports.updateUser = async (req, res) => {
 };
 
 
-// ✅ ADD THIS (FIXED SAVE USER CONTROLLER)
 
 exports.saveUser = async (req, res) => {
   try {
@@ -82,7 +81,6 @@ exports.saveUser = async (req, res) => {
       return res.json(existingUser);
     }
 
-    // ✅ AUTO APPROVE BUYER
     const finalRole = role || "buyer";
 
     const finalStatus =

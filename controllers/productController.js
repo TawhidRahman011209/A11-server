@@ -1,6 +1,5 @@
 const Product = require("../models/Product");
 
-// ✅ CREATE PRODUCT
 exports.createProduct = async (req, res) => {
   try {
     const product = await Product.create(req.body);
@@ -14,7 +13,6 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// ✅ GET PRODUCTS (FIXED 🔥)
 exports.getProducts = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -23,7 +21,6 @@ exports.getProducts = async (req, res) => {
 
     let query = {};
 
-    // ✅ ONLY apply search if it exists
     if (search) {
       query = {
         $or: [
@@ -46,7 +43,7 @@ exports.getProducts = async (req, res) => {
     const total = await Product.countDocuments(query);
 
     const products = await Product.find(query)
-      .sort({ createdAt: -1 }) // ✅ newest first
+      .sort({ createdAt: -1 }) 
       .skip((page - 1) * limit)
       .limit(limit);
 
@@ -63,7 +60,6 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-// ✅ HOME PRODUCTS
 exports.getHomeProducts = async (req, res) => {
   try {
     const products = await Product.find()
@@ -79,7 +75,6 @@ exports.getHomeProducts = async (req, res) => {
   }
 };
 
-// ✅ GET SINGLE PRODUCT (FIXED 🔥)
 exports.getSingleProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -99,7 +94,6 @@ exports.getSingleProduct = async (req, res) => {
   }
 };
 
-// ✅ DELETE PRODUCT (FIXED 🔥)
 exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
@@ -121,7 +115,6 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
-// ✅ UPDATE PRODUCT (FIXED 🔥)
 exports.updateProduct = async (req, res) => {
   try {
     const updated = await Product.findByIdAndUpdate(
@@ -129,7 +122,7 @@ exports.updateProduct = async (req, res) => {
       req.body,
       {
         new: true,
-        runValidators: true, // ✅ important
+        runValidators: true, 
       }
     );
 
@@ -148,7 +141,6 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// ✅ MANAGER PRODUCTS
 exports.getManagerProducts = async (req, res) => {
   try {
     const products = await Product.find({
