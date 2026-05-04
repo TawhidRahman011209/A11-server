@@ -66,9 +66,9 @@ exports.getProducts = async (req, res) => {
 // ✅ HOME PRODUCTS
 exports.getHomeProducts = async (req, res) => {
   try {
-    const products = await Product.find({
-      showOnHome: true,
-    }).limit(6);
+    const products = await Product.find()
+    .sort({ createdAt: -1 }) // newest first
+    .limit(3);
 
     res.json(products);
   } catch (error) {
