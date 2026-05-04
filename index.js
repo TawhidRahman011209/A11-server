@@ -22,7 +22,10 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+    ],
     credentials: true,
   })
 );
@@ -43,45 +46,63 @@ app.use("/api/users", userRoutes);
 
 const insertSampleProducts = async () => {
   try {
-    const count = await Product.countDocuments();
+    // DELETE OLD PRODUCTS
+    await Product.deleteMany({});
 
-    if (count === 0) {
-      await Product.insertMany([
-        {
-          name: "Cotton T-Shirt",
-          category: "T-Shirt",
-          price: 12,
-          quantity: 100,
-          moq: 10,
-          images: [
-            "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1000&auto=format&fit=crop",
-          ],
-          description: "High quality cotton t-shirt",
-          paymentOption: "Cash",
-          demoVideo: "",
-          showOnHome: true,
-          createdBy: "manager@gmail.com",
-        },
+    // INSERT NEW PRODUCTS
+    await Product.insertMany([
+      {
+        name: "Cotton T-Shirt",
+        category: "T-Shirt",
+        price: 12,
+        quantity: 100,
+        images: [
+          "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1000&auto=format&fit=crop",
+        ],
+      },
 
-        {
-          name: "Blue Hoodie",
-          category: "Hoodie",
-          price: 30,
-          quantity: 50,
-          moq: 5,
-          images: [
-            "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1000&auto=format&fit=crop",
-          ],
-          description: "Warm blue hoodie",
-          paymentOption: "Card",
-          demoVideo: "",
-          showOnHome: true,
-          createdBy: "manager@gmail.com",
-        },
-      ]);
+      {
+        name: "Black Denim Jacket",
+        category: "Jacket",
+        price: 45,
+        quantity: 25,
+        images: [
+          "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1000&auto=format&fit=crop",
+        ],
+      },
 
-      console.log("Sample products inserted");
-    }
+      {
+        name: "Classic Polo Shirt",
+        category: "Polo",
+        price: 20,
+        quantity: 60,
+        images: [
+          "https://images.unsplash.com/photo-1503341504253-dff4815485f1",
+        ],
+      },
+
+      {
+        name: "Oversized Hoodie",
+        category: "Hoodie",
+        price: 35,
+        quantity: 40,
+        images: [
+          "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f",
+        ],
+      },
+
+      {
+        name: "Slim Fit Jeans",
+        category: "Jeans",
+        price: 38,
+        quantity: 50,
+        images: [
+          "https://images.unsplash.com/photo-1541099649105-f69ad21f3246",
+        ],
+      },
+    ]);
+
+    console.log("Sample products inserted");
   } catch (error) {
     console.log(error.message);
   }
